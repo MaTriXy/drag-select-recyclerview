@@ -3,9 +3,17 @@
 This library allows you to implement Google Photos style multi-selection in your apps! You start
 by long pressing an item in your list, then you drag your finger without letting go to select more.
 
-You can [download a sample APK](https://github.com/afollestad/drag-select-recyclerview/raw/master/sample/sample.apk)!
+![Art](https://github.com/afollestad/drag-select-recyclerview/raw/master/art/showcase.gif)
 
-![Art](https://github.com/afollestad/drag-select-recyclerview/raw/master/art/dsrvart.png)
+# Sample
+
+You can [download a sample APK](https://github.com/afollestad/drag-select-recyclerview/raw/master/sample/sample.apk) or 
+[view it on Google Play](https://play.google.com/store/apps/details?id=com.afollestad.dragselectrecyclerviewsample)!
+
+<a href="https://play.google.com/store/apps/details?id=com.afollestad.dragselectrecyclerviewsample">
+  <img alt="Get it on Google Play"
+       src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png" />
+</a>
 
 ---
 
@@ -21,11 +29,13 @@ repositories {
 
 dependencies {
     // ...
-    compile('com.afollestad:drag-select-recyclerview:0.1.0@aar') {
+    compile('com.github.afollestad:drag-select-recyclerview:0.2.1@aar') {
         transitive = true
     }
 }
 ```
+
+[![Release](https://img.shields.io/github/release/afollestad/drag-select-recyclerview.svg?label=jitpack)](https://jitpack.io/#afollestad/drag-select-recyclerview)
 
 ---
 
@@ -36,13 +46,17 @@ dependencies {
 3. [DragSelectRecyclerViewAdapter](https://github.com/afollestad/drag-select-recyclerview#dragselectrecyclerviewadapter)
 4. [User Activation](https://github.com/afollestad/drag-select-recyclerview#user-activation)
 5. [Selection Retrieval and Modification](https://github.com/afollestad/drag-select-recyclerview#selection-retrieval-and-modification)
+6. [Auto Scroll](https://github.com/afollestad/drag-select-recyclerview#auto-scroll)
 
 ---
 
 # Introduction
 
 `DragSelectRecyclerView` and `DragSelectRecyclerViewAdapter` are the two main classes of this library.
-They work together to provide the functionality you seek. 
+They work together to provide the functionality you seek.
+
+This library will also automatically auto scroll like Google Photos. If you drag to the top of the RecyclerView,
+the list will scroll up, and vice versa.
 
 ---
 
@@ -187,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Setup adapter and callbacks
         mAdapter = new MainAdapter(this);
-        // Listen for selection changes to update indicators
+        // Receives selection updates, recommended to set before restoreInstanceState() so initial reselection is received
         mAdapter.setSelectionListener(this);
         // Restore selected indices after Activity recreation
         mAdapter.restoreInstanceState(savedInstanceState);
@@ -258,3 +272,28 @@ adapter.saveInstanceState(outState);
 // Used in section above, restores selected indices from Bundle
 adapter.restoreInstanceState(inState);
 ```
+
+---
+
+# Auto Scroll
+
+By default, this library will auto scroll. During drag selection, moving your finger to the top
+of the list will scroll up. Moving your finger to the bottom of the list will scroll down.
+
+At the start of the activation point at the top or bottom, the list will scroll slowly. The further
+you move into the activation area, the faster it will scroll.
+
+You can disable auto scroll, or change the activation hotspot from your layout XML:
+
+```xml
+<com.afollestad.dragselectrecyclerview.DragSelectRecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:dsrv_autoScrollEnabled="true"
+        app:dsrv_autoScrollHotspotHeight="56dp" />
+```
+
+56dp is the default hotspot height, you can raise or lower it if necessary. Smaller hotspots will
+scroll quickly since there's not much room for velocity change.
