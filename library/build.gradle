@@ -1,36 +1,33 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply from: '../dependencies.gradle'
 
-ext {
-    PUBLISH_GROUP_ID = 'com.afollestad'
-    PUBLISH_ARTIFACT_ID = 'drag-select-recyclerview'
-    PUBLISH_VERSION = versions.publishVersion
-}
+apply from: '../bintrayconfig.gradle'
 
 android {
-    compileSdkVersion versions.compileSdk
-    buildToolsVersion versions.buildTools
+  compileSdkVersion versions.compileSdk
+  buildToolsVersion versions.buildTools
 
-    defaultConfig {
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.compileSdk
-        versionCode versions.publishVersionCode
-        versionName versions.publishVersion
-    }
-    lintOptions {
-        abortOnError false
-        checkReleaseBuilds false
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+  compileOptions {
+    kotlinOptions.freeCompilerArgs += ['-module-name', "com.afollestad.drag-select-recyclerview"]
+  }
+
+  defaultConfig {
+    minSdkVersion versions.minSdk
+    targetSdkVersion versions.compileSdk
+    versionCode versions.publishVersionCode
+    versionName versions.publishVersion
+  }
+
+  packagingOptions {
+    pickFirst 'META-INF/proguard/androidx-annotations.pro'
+  }
 }
 
 dependencies {
-    compile 'com.android.support:recyclerview-v7:' + versions.supportLib
+  api 'androidx.recyclerview:recyclerview:' + versions.androidxRecyclerView
+  implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + versions.kotlin
 }
 
-apply from: 'https://raw.githubusercontent.com/afollestad/aidanfollestad.com/master/android-lib-release.gradle'
+apply from: '../spotless.gradle'
